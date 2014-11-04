@@ -10,5 +10,5 @@ $application = new Application('Sourcery Console Tool', '1.0.0');
 $application->setCatchExceptions(true);
 $application->add(new \Sourcery\Command\TabsToSpacesCommand());
 $application->add(new \Sourcery\Command\TrimTrailingWhitespaceCommand());
-//$application->add(new \Sourcery\Command\TokenTestCommand());
+$application->add(new \Sourcery\Command\TokenTestCommand());
 $application->run();
