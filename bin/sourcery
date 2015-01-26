@@ -11,4 +11,5 @@ $application->setCatchExceptions(true);
 $application->add(new \Sourcery\Command\TabsToSpacesCommand());
 $application->add(new \Sourcery\Command\TrimTrailingWhitespaceCommand());
 $application->add(new \Sourcery\Command\TokenTestCommand());
+$application->add(new \Sourcery\Command\AutoCaseCommand());
 $application->run();
