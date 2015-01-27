@@ -41,6 +41,24 @@ class AutoCaseCommand extends BaseCommand
     
     protected function fixup($content)
     {
+        return $this->fixMethodCalls($this->fixStaticMethodCalls($content));
+    }
+
+    private function fixStaticMethodCalls($content)
+    {
+        $content = preg_replace_callback(
+            '|::\s*\w|',
+            function ($matches) {
+                // print_r($matches);
+                return strtolower($matches[0]);
+            },
+            $content
+        );
+        return $content;
+    }
+
+    private function fixMethodCalls($content)
+    {
         $escapeX = true;
 
         // escape the ->X...
@@ -54,7 +72,6 @@ class AutoCaseCommand extends BaseCommand
             },
             $content
         );
-
         return $content;
     }
 }
