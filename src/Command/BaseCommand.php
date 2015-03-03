@@ -54,22 +54,33 @@ class BaseCommand extends Command
     {
         $this->output = $output;
         $this->input = $input;
-        if ($this->input->getOption('diff')!='') {
-            $this->dryrun = true;
-            $this->diff = true;
-        }
-        if ($this->input->getOption('dryrun')!='') {
-            $this->dryrun = true;
-        }
 
-        if ($this->dryrun) {
-            $output->writeLn("Dryrun: enabled");
-        }
-        if ($this->diff) {
-            $output->writeLn("Diff: enabled");
+        if (!$this->enableDiff()) {
+            $this->enableDryrun();
         }
 
         $this->processPath($input->getArgument('path'));
+    }
+
+    private function enableDiff()
+    {
+        if ($this->input->getOption('diff')!='') {
+            $this->diff = true;
+            $this->dryrun = true;
+            $this->output->writeLn("<comment>Enabled: diff and dryrun</comment>");
+            return true;
+        }
+        return false;
+    }
+
+    private function enableDryrun()
+    {
+        if ($this->input->getOption('dryrun')!='') {
+            $this->dryrun = true;
+            $this->output->writeLn("<comment>Enabled: dryrun</comment>");
+            return true;
+        }
+        return false;
     }
 
     protected function processPath($path)
