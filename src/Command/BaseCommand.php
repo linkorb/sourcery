@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use SebastianBergmann\Diff\Differ;
+use RuntimeException;
 
 class BaseCommand extends Command
 {
@@ -67,8 +68,20 @@ class BaseCommand extends Command
         if ($this->diff) {
             $output->writeLn("Diff: enabled");
         }
-        $finder = $this->getFinder();
-        $this->processFiles($finder);
+
+        $this->processPath($input->getArgument('path'));
+    }
+
+    protected function processPath($path)
+    {
+        if (is_dir($path)) {
+            $finder = $this->getFinder();
+            $this->processFiles($finder);
+        } elseif (file_exists($path)) {
+            $this->processFile($path);
+        } else {
+            throw new RuntimeException('Invalid path: ' . $path);
+        }
     }
 
     protected function getFinder()
@@ -87,23 +100,28 @@ class BaseCommand extends Command
     {
         foreach ($finder as $file) {
             $filename = $file->getPath() . '/' . $file->getFilename();
-            $original = file_get_contents($filename);
-            $fixed = $this->fixup($original);
+            $this->processFile($filename);
+        }
+    }
+
+    protected function processFile($filename)
+    {
+        $original = file_get_contents($filename);
+        $fixed = $this->fixup($original);
+        
+        if ($fixed != $original) {
+            $this->output->writeln("Changed: " . $filename);
             
-            if ($fixed != $original) {
-                $this->output->writeln("Changed: " . $filename);
-                
-                if ($this->diff) {
-                    $differ = new Differ();
-                    print $differ->diff($original, $fixed);
-                }
-                if (!$this->dryrun) {
-                    file_put_contents($filename, $fixed);
-                }
+            if ($this->diff) {
+                $differ = new Differ();
+                print $differ->diff($original, $fixed);
+            }
+            if (!$this->dryrun) {
+                file_put_contents($filename, $fixed);
             }
         }
     }
-    
+
     protected function fixup($content)
     {
         return $content;
