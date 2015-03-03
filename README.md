@@ -1,3 +1,4 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/linkorb/sourcery/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/linkorb/sourcery/?branch=master)
 # sourcery
 Sourcery: Helps you to fixup/cleanup/awesomeup your sourcecode
 
